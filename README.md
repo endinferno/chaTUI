@@ -1,3 +1,7 @@
+# Version
+
+1.0
+
 # 依赖安装
 
 python3 -m pip install -r requirements.txt

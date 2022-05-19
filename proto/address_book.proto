@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package example;
+import 'record_metadata_options.proto';
+
+message Person {
+  int32 id = 1 [ (webaas.db.record.field).primary_key = true ];
+  string name = 2 [ (webaas.db.record.field).index = {} ];
+}
+
+message Message {
+  string data = 1;
+}
+
+message ChatRoom {
+  int32 id = 1 [ (webaas.db.record.field).primary_key = true ];
+  repeated Person people = 2;
+  repeated Message msg = 3;
+}

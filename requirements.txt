@@ -1,0 +1,5 @@
+protobuf==3.20.0
+requests==2.22.0
+websockets
+asyncio
+pytermgui
