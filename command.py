@@ -61,12 +61,12 @@ class ChatRoomApp:
 
     def process_help(self):
         message_list = []
-        message_list.append("\help")
+        message_list.append("/help")
         message_list.append("    Command Help")
-        message_list.append("\join")
-        message_list.append("    \join \[username] \[chatroom_id]")
-        message_list.append("\show")
-        message_list.append("    \show \[chatroom_id] \[show_property]")
+        message_list.append("/join")
+        message_list.append("    /join \[username] \[chatroom_id]")
+        message_list.append("/show")
+        message_list.append("    /show \[chatroom_id] \[show_property]")
         message_list.append("    \[show_property]")
         message_list.append("        People")
         message_list.append("        Message")
