@@ -25,6 +25,7 @@ class ChatRoomApp:
             self.chatroom_info.login(username)
         else:
             # Login ChatRoom
+            self.chatroom_info.set_chatroom_id(chatroom_id)
             self.chatroom_info.login(username)
 
     def process_show(self, show_command):
