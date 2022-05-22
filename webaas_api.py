@@ -6,16 +6,34 @@ import address_book_pb2
 import websockets
 import asyncio
 import threading
-endpoint = '202.120.40.82:11233'
+ip = '202.120.40.82'
+port_list = [11232, 11233]
+port = 0
 # appName = "python-crud"+str(uuid.uuid4())  # unique app name
 appName = "python-crud01a66ecc-d7e0-43e4-97be-1958461b6a12"
 appID = "cef8dd2d-f80a-4843-a471-a05c5f7afca2"
 # appID = None
 
+def get_endpoint():
+    return ip + ':' + str(port)
+
+def test_endpoint():
+    global port
+    for item in port_list:
+        r = requests.get("http://" + ip + ":" + str(item) + "/hello")
+        if r.status_code != 200:
+            print("Error test hello: "+r.text)
+            continue
+        port = item
+        break
+    if port == 0:
+        print("WeBaas Server Connection Fail!")
+        sys.exit(1)
+
 def register():
     global appID
     print("Registering app...")
-    r = requests.post("http://" + endpoint + "/app", params={"appName": appName})
+    r = requests.post("http://" + get_endpoint() + "/app", params={"appName": appName})
     print(appName)
     if r.status_code == 200:
         appID = r.json()["appID"]
@@ -28,7 +46,7 @@ def create_schema():
     print("Creating schema...")
     # upload schema file
     with open("proto/address_book.proto", "rb") as f:
-        r = requests.put("http://" + endpoint + "/schema", data = f.read(),
+        r = requests.put("http://" + get_endpoint() + "/schema", data = f.read(),
                          params = {"appID": appID,
                                    "fileName": "address_book.proto",
                                    "version": "1.0.0"})
@@ -37,7 +55,7 @@ def create_schema():
             sys.exit(1)
     print("Schema file uploaded.")
     # update schema version
-    r = requests.post("http://" + endpoint + "/schema",
+    r = requests.post("http://" + get_endpoint() + "/schema",
                       params={"appID": appID, "version": "1.0.0"})
     if r.status_code != 200:
         print("Error updating schema version: "+r.text)
@@ -46,7 +64,7 @@ def create_schema():
 
 def create_chatroom(chatroom: address_book_pb2.ChatRoom):
     print("Creating Chat Room...")
-    r = requests.post("http://" + endpoint + "/record",
+    r = requests.post("http://" + get_endpoint() + "/record",
                       params={"appID": appID, "schemaName": "example.ChatRoom"},
                       data=chatroom.SerializeToString())
     if r.status_code != 200:
@@ -55,7 +73,7 @@ def create_chatroom(chatroom: address_book_pb2.ChatRoom):
     print("Chat Room created.")
 
 def get_person(person_id):
-    r = requests.get("http://" + endpoint + "/query",
+    r = requests.get("http://" + get_endpoint() + "/query",
                      params={"appID": appID,
                              "schemaName": "example.Person",
                              "recordKey": person_id})
@@ -66,7 +84,7 @@ def get_person(person_id):
     return person
 
 def create_person(person):
-    r = requests.post("http://" + endpoint + "/record",
+    r = requests.post("http://" + get_endpoint() + "/record",
                       params={"appID": appID, "schemaName": "example.Person"},
                       data=person.SerializeToString())
     if r.status_code != 200:
@@ -74,7 +92,7 @@ def create_person(person):
         sys.exit(1)
 
 def delete_person(person_id):
-    r = requests.delete("http://" + endpoint + "/record",
+    r = requests.delete("http://" + get_endpoint() + "/record",
                         params={"appID": appID, 
                                 "schemaName": "example.Person", 
                                 "recordKey": person_id})
@@ -83,7 +101,7 @@ def delete_person(person_id):
         sys.exit(1)
 
 def create_message(message):
-    r = requests.post("http://" + endpoint + "/record", params={
+    r = requests.post("http://" + get_endpoint() + "/record", params={
         "appID": appID, "schemaName": "example.Message"}, data=message.SerializeToString())
     if r.status_code != 200:
         print("Error creating person: "+r.text)
@@ -99,7 +117,7 @@ def create_notification(schema_name, record_key):
     }
 #    print("Creating notification...")
 #    print(json.dumps(params))
-    r = requests.post('http://' + endpoint + "/notification", data=json.dumps(params))
+    r = requests.post('http://' + get_endpoint() + "/notification", data=json.dumps(params))
     if r.status_code != 200:
         print("Error creating notification: "+r.text)
         sys.exit(1)
@@ -109,7 +127,7 @@ def create_notification(schema_name, record_key):
 
 def delete_notification(schema_name, notification_id):
 #    print("Deleting notification...")
-    r = requests.delete('http://' + endpoint + "/notification", params = {
+    r = requests.delete('http://' + get_endpoint() + "/notification", params = {
         "appID": appID, 
         "notificationID": notification_id
     })
@@ -130,10 +148,6 @@ def send_msg(chatroom_id, message):
     chatroom = get_chatroom(chatroom_id)
     add_message(message, chatroom_id)
     # notify other Person in ChatRoom
-
-def initWeBaas():
-    register()
-    create_schema()
 
 class ChatRoomInfo:
     def __init__(self, chatroom_id, show_person_func, show_message_func):
@@ -176,7 +190,7 @@ class ChatRoomInfo:
         delete_notification('example.ChatRoom', self.n_id)
 
     def get_chatroom(self, chatroom_id):
-        r = requests.get("http://" + endpoint + "/query",
+        r = requests.get("http://" + get_endpoint() + "/query",
                          params={"appID": appID,
                                  "schemaName": "example.ChatRoom",
                                  "recordKey": chatroom_id})
@@ -191,7 +205,7 @@ class ChatRoomInfo:
 
     async def person_notification_worker(self):
         # Update ChatRoom
-        path = 'ws://' + endpoint + '/notification' + '?appID=' + appID + '&notificationID=' + self.n_id
+        path = 'ws://' + get_endpoint() + '/notification' + '?appID=' + appID + '&notificationID=' + self.n_id
         async with websockets.connect(path) as websocket:
             while self.thread_running:
                 # Next User Join
@@ -240,8 +254,24 @@ class ChatRoomInfo:
             print("Error ChatRoom ID " + chatroom_id)
             sys.exit(1)
         for item in self.chatroom.msg:
-            message_list.append(item.name)
+            message_list.append(item.data)
         self.show_message_func(message_list)
+
+    def show_chatroom(self):
+        chatroom_id_list = []
+        for idx in range(1, 100):
+            r = requests.get("http://" + get_endpoint() + "/query",
+                             params={"appID": appID,
+                                     "schemaName": "example.ChatRoom",
+                                     "recordKey": idx})
+            if r.status_code != 200:
+                break
+            chatroom = address_book_pb2.ChatRoom().FromString(r.content)
+            if chatroom == None:
+                break
+            chatroom_id_list.append('ChatRoom ID ' + str(idx))
+        self.show_message_func(chatroom_id_list)
+        return chatroom
 
     def is_in_chatroom(self):
         return self.in_chatroom
@@ -283,7 +313,7 @@ class ChatRoomInfo:
         create_chatroom(chatroom)
 
 def get_chatroom(chatroom_id):
-    r = requests.get("http://" + endpoint + "/query",
+    r = requests.get("http://" + get_endpoint() + "/query",
                      params={"appID": appID,
                              "schemaName": "example.ChatRoom",
                              "recordKey": chatroom_id})

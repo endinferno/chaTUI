@@ -230,6 +230,6 @@ def main(argv: list[str] | None = None) -> None:
     ptg.tim.print(f"[{PALETTE_LIGHT}]Goodbye!")
 
 if __name__ == "__main__":
-    # webaas_api.initWeBaas()
     chatroom_app = command.ChatRoomApp(show_person, show_message)
+    chatroom_app.initApp()
     main(sys.argv[1:])

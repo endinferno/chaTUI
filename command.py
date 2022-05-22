@@ -36,6 +36,8 @@ class ChatRoomApp:
             temp_chatroom_info.show_person()
         elif show_property == 'Message':
             temp_chatroom_info.show_message()
+        elif show_property == 'ChatRoom':
+            temp_chatroom_info.show_chatroom()
 
     def process_leave(self):
         if self.chatroom_info == None:
@@ -87,3 +89,9 @@ class ChatRoomApp:
 
     def isInChatRoom(self):
         return self.chatroom_info.is_in_chatroom()
+
+    def initApp(self):
+        webaas_api.test_endpoint()
+#        webaas_api.register()
+#        webaas_api.create_schema()
+
