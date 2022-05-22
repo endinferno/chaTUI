@@ -17,7 +17,7 @@ class ChatRoomApp:
             self.chatroom_info = webaas_api.ChatRoomInfo(
                 chatroom_id, self.show_person_func, self.show_message_func)
 
-        if self.isInChatRoom():
+        if self.in_chatroom():
             # Logout Current ChatRoom
             self.chatroom_info.logout()
             # Login Another ChatRoom
@@ -44,7 +44,7 @@ class ChatRoomApp:
             self.show_message_func(["You Are Not Logged In!"])
             return
 
-        if self.isInChatRoom():
+        if self.in_chatroom():
             # log out
             self.chatroom_info.logout()
         else:
@@ -55,7 +55,7 @@ class ChatRoomApp:
             self.show_message_func(["You Are Not in ChatRoom Now!"])
             return
 
-        if self.isInChatRoom():
+        if self.in_chatroom():
             self.chatroom_info.send_msg(message)
         else:
             self.show_message_func(["You Are Not Logged In!"])
@@ -87,10 +87,10 @@ class ChatRoomApp:
         elif root_command == 'leave':
             self.process_leave()
 
-    def isInChatRoom(self):
+    def in_chatroom(self):
         return self.chatroom_info.is_in_chatroom()
 
-    def initApp(self):
+    def init_app(self):
         webaas_api.test_endpoint()
 #        webaas_api.register()
 #        webaas_api.create_schema()

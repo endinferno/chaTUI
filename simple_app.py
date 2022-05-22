@@ -231,5 +231,5 @@ def main(argv: list[str] | None = None) -> None:
 
 if __name__ == "__main__":
     chatroom_app = command.ChatRoomApp(show_person, show_message)
-    chatroom_app.initApp()
+    chatroom_app.init_app()
     main(sys.argv[1:])
