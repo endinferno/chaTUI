@@ -72,6 +72,7 @@ class ChatRoomApp:
         message_list.append("    \[show_property]")
         message_list.append("        People")
         message_list.append("        Message")
+        message_list.append("        ChatRoom")
         self.show_message_func(message_list)
 
     def process_command(self, command_line):
