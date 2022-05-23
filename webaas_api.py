@@ -72,6 +72,16 @@ def create_chatroom(chatroom: address_book_pb2.ChatRoom):
         sys.exit(1)
     print("Chat Room created.")
 
+def update_chatroom(chatroom: address_book_pb2.ChatRoom):
+    print("Updating Chat Room...")
+    r = requests.post("http://" + get_endpoint() + "/record",
+                      params={"appID": appID, "schemaName": "example.ChatRoom"},
+                      data=chatroom.SerializeToString())
+    if r.status_code != 200:
+        print("Error creating chat room: "+r.text)
+        sys.exit(1)
+    print("Chat Room updated.")
+
 def get_person(person_id):
     r = requests.get("http://" + get_endpoint() + "/query",
                      params={"appID": appID,
@@ -142,7 +152,7 @@ def add_message(message, chatroom_id):
     chatroom = get_chatroom(chatroom_id)
     new_message = chatroom.msg.add()
     new_message.CopyFrom(message)
-    create_chatroom(chatroom)
+    update_chatroom(chatroom)
 
 def send_msg(chatroom_id, message):
     chatroom = get_chatroom(chatroom_id)
@@ -298,19 +308,19 @@ class ChatRoomInfo:
         chatroom = get_chatroom(chatroom_id)
         person = get_person(person_id)
         chatroom.people.insert(person_id - 1, person)
-        create_chatroom(chatroom)
+        update_chatroom(chatroom)
 
     def del_person_from_chatroom(self, person_id, chatroom_id):
         chatroom = get_chatroom(chatroom_id)
         for item in chatroom.people:
             if item.id == person_id:
                 chatroom.people.remove(item)
-                create_chatroom(chatroom)
+                update_chatroom(chatroom)
 
     def add_message_to_chatroom(self, message, chatroom_id):
         chatroom = get_chatroom(chatroom_id)
         chatroom.msg.append(message)
-        create_chatroom(chatroom)
+        update_chatroom(chatroom)
 
 def get_chatroom(chatroom_id):
     r = requests.get("http://" + get_endpoint() + "/query",
