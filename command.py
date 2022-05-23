@@ -80,6 +80,9 @@ class ChatRoomApp:
         message_list.append("        ChatRoom")
         self.show_message_func(message_list)
 
+    def process_create(self):
+        webaas_api.create_chatroom()
+
     def process_command(self, command_line):
         command = str.split(command_line, ' ')
         root_command = command[0][1:]
@@ -92,6 +95,8 @@ class ChatRoomApp:
             return self.process_help()
         elif root_command == 'leave':
             self.process_leave()
+        elif root_command == 'create':
+            self.process_create()
 
     def in_chatroom(self):
         return self.chatroom_info.is_in_chatroom()

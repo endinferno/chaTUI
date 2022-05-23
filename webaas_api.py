@@ -77,7 +77,14 @@ def get_used_chatroom_id():
         chatroom_id_list.append(idx)
     return chatroom_id_list
 
-def create_chatroom(chatroom: address_book_pb2.ChatRoom):
+def get_avail_chatroom_id():
+    chatroom_id_list = get_used_chatroom_id()
+    cur_max_chatroom_id = chatroom_id_list[-1]
+    return cur_max_chatroom_id + 1
+
+def create_chatroom():
+    chatroom = address_book_pb2.ChatRoom()
+    chatroom.id = get_avail_chatroom_id()
     print("Creating Chat Room...")
     r = requests.post("http://" + get_endpoint() + "/record",
                       params={"appID": appID, "schemaName": "example.ChatRoom"},
