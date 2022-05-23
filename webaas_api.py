@@ -62,6 +62,21 @@ def create_schema():
         sys.exit(1)
     print("Schema version updated.")
 
+def show_chatroom():
+    chatroom_id_list = []
+    for idx in range(1, 100):
+        r = requests.get("http://" + get_endpoint() + "/query",
+                         params={"appID": appID,
+                                 "schemaName": "example.ChatRoom",
+                                 "recordKey": idx})
+        if r.status_code != 200:
+            break
+        chatroom = address_book_pb2.ChatRoom().FromString(r.content)
+        if chatroom == None:
+            break
+        chatroom_id_list.append('ChatRoom ID ' + str(idx))
+    return chatroom_id_list
+
 def create_chatroom(chatroom: address_book_pb2.ChatRoom):
     print("Creating Chat Room...")
     r = requests.post("http://" + get_endpoint() + "/record",
@@ -266,22 +281,6 @@ class ChatRoomInfo:
         for item in self.chatroom.msg:
             message_list.append(item.data)
         self.show_message_func(message_list)
-
-    def show_chatroom(self):
-        chatroom_id_list = []
-        for idx in range(1, 100):
-            r = requests.get("http://" + get_endpoint() + "/query",
-                             params={"appID": appID,
-                                     "schemaName": "example.ChatRoom",
-                                     "recordKey": idx})
-            if r.status_code != 200:
-                break
-            chatroom = address_book_pb2.ChatRoom().FromString(r.content)
-            if chatroom == None:
-                break
-            chatroom_id_list.append('ChatRoom ID ' + str(idx))
-        self.show_message_func(chatroom_id_list)
-        return chatroom
 
     def is_in_chatroom(self):
         return self.in_chatroom
