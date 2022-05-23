@@ -72,6 +72,7 @@ class ChatRoomApp:
         message_list.append("    Command Help")
         message_list.append("/join")
         message_list.append("    /join \[username] \[chatroom_id]")
+        message_list.append("/create")
         message_list.append("/show")
         message_list.append("    /show \[chatroom_id] \[show_property]")
         message_list.append("    \[show_property]")
