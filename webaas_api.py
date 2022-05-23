@@ -26,9 +26,8 @@ err_code = {
 def get_endpoint():
     return ip + ':' + str(port)
 
-def process_err_code(response_json):
-    err = err_code.get(response_json['code'], "Invalid Response Code")
-    print(err)
+def get_err_code(response_json):
+    return err_code.get(response_json['code'], "Invalid Response Code")
 
 def test_endpoint():
     global port
