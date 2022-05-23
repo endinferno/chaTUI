@@ -176,11 +176,6 @@ def add_message(message, chatroom_id):
     new_message.CopyFrom(message)
     update_chatroom(chatroom)
 
-def send_msg(chatroom_id, message):
-    chatroom = get_chatroom(chatroom_id)
-    add_message(message, chatroom_id)
-    # notify other Person in ChatRoom
-
 class ChatRoomInfo:
     def __init__(self, chatroom_id, show_person_func, show_message_func):
         # Get ChatRoom By ID
