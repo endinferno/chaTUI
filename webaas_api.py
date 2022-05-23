@@ -183,12 +183,6 @@ def delete_notification(schema_name, notification_id):
 #    print(r.json())
     return r.json()["notificationID"]
 
-def add_message(message, chatroom_id):
-    chatroom = get_chatroom(chatroom_id)
-    new_message = chatroom.msg.add()
-    new_message.CopyFrom(message)
-    update_chatroom(chatroom)
-
 class ChatRoomInfo:
     def __init__(self, chatroom_id, show_person_func, show_message_func):
         # Get ChatRoom By ID
@@ -335,20 +329,6 @@ class ChatRoomInfo:
         chatroom = self.get_chatroom(chatroom_id)
         chatroom.msg.append(message)
         update_chatroom(chatroom)
-
-def get_chatroom(chatroom_id):
-    r = requests.get("http://" + get_endpoint() + "/query",
-                     params={"appID": appID,
-                             "schemaName": "example.ChatRoom",
-                             "recordKey": chatroom_id})
-    if r.status_code != 200:
-        print("Error getting address book: "+r.text)
-        sys.exit(1)
-    chatroom = address_book_pb2.ChatRoom().FromString(r.content)
-    if chatroom == None:
-        print("Error ChatRoom ID " + chatroom_id)
-        sys.exit(1)
-    return chatroom
 
 #if __name__ == "__main__":
 #    print(chatroom.people)
