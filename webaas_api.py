@@ -9,13 +9,26 @@ import threading
 ip = '202.120.40.82'
 port_list = [11232, 11233]
 port = 0
-# appName = "python-crud"+str(uuid.uuid4())  # unique app name
-appName = "python-crud01a66ecc-d7e0-43e4-97be-1958461b6a12"
-appID = "cef8dd2d-f80a-4843-a471-a05c5f7afca2"
+# appName = 'python-chatroom' + str(uuid.uuid4())  # unique app name
 # appID = None
+appName = 'python-chatroom35b54caf-524b-4e2c-b12f-32cdd863c1d1'
+appID = 'f2f40771-72cf-4ae8-b9c3-2983b4e8a972'
+
+err_code = {
+    1001: "Invalid Format",
+    1002: "Data Not Found",
+    1003: "Permission Denied",
+    1004: "Repeated Request",
+    1005: "Invalid Schema",
+    1006: "Invalid Version",
+}
 
 def get_endpoint():
     return ip + ':' + str(port)
+
+def process_err_code(response_json):
+    err = err_code.get(response_json['code'], "Invalid Response Code")
+    print(err)
 
 def test_endpoint():
     global port
@@ -262,11 +275,11 @@ class ChatRoomInfo:
 
     def set_chatroom_id(self, chatroom_id):
         self.chatroom_id = chatroom_id
-        self.chatroom = get_chatroom(self.chatroom_id)
+        self.chatroom = self.get_chatroom(self.chatroom_id)
 
     def show_person(self):
         people_list = []
-        self.chatroom = get_chatroom(self.chatroom_id)
+        self.chatroom = self.get_chatroom(self.chatroom_id)
         if self.chatroom == None:
             print("Error ChatRoom ID " + chatroom_id)
             sys.exit(1)
@@ -276,7 +289,7 @@ class ChatRoomInfo:
 
     def show_message(self):
         message_list = []
-        self.chatroom = get_chatroom(self.chatroom_id)
+        self.chatroom = self.get_chatroom(self.chatroom_id)
         if self.chatroom == None:
             print("Error ChatRoom ID " + chatroom_id)
             sys.exit(1)
@@ -306,20 +319,20 @@ class ChatRoomInfo:
         self.show_message_func([message])
 
     def add_person_to_chatroom(self, person_id, chatroom_id):
-        chatroom = get_chatroom(chatroom_id)
+        chatroom = self.get_chatroom(chatroom_id)
         person = get_person(person_id)
         chatroom.people.insert(person_id - 1, person)
         update_chatroom(chatroom)
 
     def del_person_from_chatroom(self, person_id, chatroom_id):
-        chatroom = get_chatroom(chatroom_id)
+        chatroom = self.get_chatroom(chatroom_id)
         for item in chatroom.people:
             if item.id == person_id:
                 chatroom.people.remove(item)
                 update_chatroom(chatroom)
 
     def add_message_to_chatroom(self, message, chatroom_id):
-        chatroom = get_chatroom(chatroom_id)
+        chatroom = self.get_chatroom(chatroom_id)
         chatroom.msg.append(message)
         update_chatroom(chatroom)
 
