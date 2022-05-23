@@ -38,7 +38,10 @@ class ChatRoomApp:
         elif show_property == 'Message':
             temp_chatroom_info.show_message()
         elif show_property == 'ChatRoom':
-            chatroom_print_list = webaas_api.show_chatroom()
+            chatroom_print_list = []
+            chatroom_id_list = webaas_api.get_used_chatroom_id()
+            for item in chatroom_id_list:
+                chatroom_print_list.append("ChatRoom ID: " + str(item))
             self.show_message_func(chatroom_print_list)
 
     def process_leave(self):

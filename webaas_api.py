@@ -62,7 +62,7 @@ def create_schema():
         sys.exit(1)
     print("Schema version updated.")
 
-def show_chatroom():
+def get_used_chatroom_id():
     chatroom_id_list = []
     for idx in range(1, 100):
         r = requests.get("http://" + get_endpoint() + "/query",
@@ -74,7 +74,7 @@ def show_chatroom():
         chatroom = address_book_pb2.ChatRoom().FromString(r.content)
         if chatroom == None:
             break
-        chatroom_id_list.append('ChatRoom ID ' + str(idx))
+        chatroom_id_list.append(idx)
     return chatroom_id_list
 
 def create_chatroom(chatroom: address_book_pb2.ChatRoom):
