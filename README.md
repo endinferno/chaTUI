@@ -25,6 +25,9 @@ python3 simple_app.py
 /join username 1
 使用用户名username加入聊天室1
 
+/create
+创建新的聊天室
+
 /leave
 聊天室
 
