@@ -32,7 +32,16 @@ class ChatRoomApp:
         chatroom_id = int(show_command[0])
         show_property = show_command[1]
         if show_property == 'People':
-            temp_chatroom_info.show_person()
+            people_list = []
+            chatroom = webaas_api.ChatRoomInfo.get_chatroom(chatroom_id)
+            if chatroom == None:
+                people_list.append("There is No ChatRoom ID " + str(chatroom_id))
+                self.show_person_func(people_list)
+                return
+            people_list = webaas_api.ChatRoomInfo.get_people_list(chatroom)
+            if len(people_list) == 0:
+                people_list.append("There is No People in ChatRoom " + str(chatroom_id))
+            self.show_person_func(people_list)
         elif show_property == 'Message':
             temp_chatroom_info.show_message()
         elif show_property == 'ChatRoom':

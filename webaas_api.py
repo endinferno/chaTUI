@@ -222,20 +222,6 @@ class ChatRoomInfo:
         self.show_person()
         delete_notification('example.ChatRoom', self.n_id)
 
-    def get_chatroom(self, chatroom_id):
-        r = requests.get("http://" + get_endpoint() + "/query",
-                         params={"appID": appID,
-                                 "schemaName": "example.ChatRoom",
-                                 "recordKey": chatroom_id})
-        if r.status_code != 200:
-            print("Error getting address book: "+r.text)
-            sys.exit(1)
-        chatroom = address_book_pb2.ChatRoom().FromString(r.content)
-        if chatroom == None:
-            print("Error ChatRoom ID " + chatroom_id)
-            sys.exit(1)
-        return chatroom
-
     async def person_notification_worker(self):
         # Update ChatRoom
         path = 'ws://' + get_endpoint() + '/notification' + '?appID=' + appID + '&notificationID=' + self.n_id
@@ -269,16 +255,6 @@ class ChatRoomInfo:
     def set_chatroom_id(self, chatroom_id):
         self.chatroom_id = chatroom_id
         self.chatroom = self.get_chatroom(self.chatroom_id)
-
-    def show_person(self):
-        people_list = []
-        self.chatroom = self.get_chatroom(self.chatroom_id)
-        if self.chatroom == None:
-            print("Error ChatRoom ID " + chatroom_id)
-            sys.exit(1)
-        for item in self.chatroom.people:
-            people_list.append(item.name)
-        self.show_person_func(people_list)
 
     def show_message(self):
         message_list = []
@@ -328,6 +304,29 @@ class ChatRoomInfo:
         chatroom = self.get_chatroom(chatroom_id)
         chatroom.msg.append(message)
         update_chatroom(chatroom)
+
+    @staticmethod
+    def get_chatroom(chatroom_id):
+        r = requests.get("http://" + get_endpoint() + "/query",
+                         params={"appID": appID,
+                                 "schemaName": "example.ChatRoom",
+                                 "recordKey": chatroom_id})
+        if r.status_code != 200:
+            print("Error getting address book: "+r.text)
+            print(get_err_code(r.json()))
+            return None
+        chatroom = address_book_pb2.ChatRoom().FromString(r.content)
+        if chatroom == None:
+            print("Error ChatRoom ID " + str(chatroom_id))
+            return None
+        return chatroom
+
+    @staticmethod
+    def get_people_list(chatroom):
+        people_list = []
+        for item in chatroom.people:
+            people_list.append(item.name)
+        return people_list
 
 #if __name__ == "__main__":
 #    print(chatroom.people)
