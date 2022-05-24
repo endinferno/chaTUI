@@ -211,8 +211,7 @@ class ChatRoomInfo:
         # Show History Messages
         message_list = self.get_message_list(self.chatroom)
         self.show_message_func(message_list[-20:])
-        # 创建notification，当前用户对于Person的notification
-        # 对于下一个Person的主键的notification
+        # Create Notification of Current ChatRoom
         self.n_id = create_notification('example.ChatRoom', str(self.chatroom_id))
         self.thread_running = True
         event_loop = asyncio.new_event_loop()
