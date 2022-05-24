@@ -256,16 +256,6 @@ class ChatRoomInfo:
         self.chatroom_id = chatroom_id
         self.chatroom = self.get_chatroom(self.chatroom_id)
 
-    def show_message(self):
-        message_list = []
-        self.chatroom = self.get_chatroom(self.chatroom_id)
-        if self.chatroom == None:
-            print("Error ChatRoom ID " + chatroom_id)
-            sys.exit(1)
-        for item in self.chatroom.msg:
-            message_list.append(item.data)
-        self.show_message_func(message_list)
-
     def is_in_chatroom(self):
         return self.in_chatroom
 
@@ -327,6 +317,13 @@ class ChatRoomInfo:
         for item in chatroom.people:
             people_list.append(item.name)
         return people_list
+
+    @staticmethod
+    def get_message_list(chatroom):
+        message_list = []
+        for item in chatroom.msg:
+            message_list.append(item.data)
+        return message_list
 
 #if __name__ == "__main__":
 #    print(chatroom.people)
