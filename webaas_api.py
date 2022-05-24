@@ -202,10 +202,11 @@ class ChatRoomInfo:
         # Add User To ChatRoom
         self.add_person_to_chatroom(self.person_id, self.chatroom_id)
         # Show People List in SideBar
-        self.show_person()
+        self.chatroom = self.get_chatroom(self.chatroom_id)
+        people_list = self.get_people_list(self.chatroom)
+        self.show_person_func(people_list)
         # 创建notification，当前用户对于Person的notification
         # 对于下一个Person的主键的notification
-        self.chatroom = self.get_chatroom(self.chatroom_id)
         self.n_id = create_notification('example.ChatRoom', str(self.chatroom_id))
         self.thread_running = True
         event_loop = asyncio.new_event_loop()
@@ -220,7 +221,11 @@ class ChatRoomInfo:
         # Delete User
         delete_person(self.person_id)
         self.del_person_from_chatroom(self.person_id, self.chatroom_id)
-        self.show_person()
+        # Update People List
+        self.chatroom = self.get_chatroom(self.chatroom_id)
+        people_list = self.get_people_list(self.chatroom)
+        self.show_person_func(people_list)
+        # Delete notification
         delete_notification('example.ChatRoom', self.n_id)
 
     async def person_notification_worker(self):
