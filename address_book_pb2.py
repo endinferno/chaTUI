@@ -12,10 +12,11 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 import record_metadata_options_pb2 as record__metadata__options__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12\x61\x64\x64ress_book.proto\x12\x07\x65xample\x1a\x1drecord_metadata_options.proto\"0\n\x06Person\x12\x11\n\x02id\x18\x01 \x01(\x05\x42\x05\x8aM\x02\x08\x01\x12\x13\n\x04name\x18\x02 \x01(\tB\x05\x8aM\x02\x12\x00\"\x17\n\x07Message\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\t\"]\n\x08\x43hatRoom\x12\x11\n\x02id\x18\x01 \x01(\x05\x42\x05\x8aM\x02\x08\x01\x12\x1f\n\x06people\x18\x02 \x03(\x0b\x32\x0f.example.Person\x12\x1d\n\x03msg\x18\x03 \x03(\x0b\x32\x10.example.Messageb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12\x61\x64\x64ress_book.proto\x12\x07\x65xample\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1drecord_metadata_options.proto\"0\n\x06Person\x12\x11\n\x02id\x18\x01 \x01(\x05\x42\x05\x8aM\x02\x08\x01\x12\x13\n\x04name\x18\x02 \x01(\tB\x05\x8aM\x02\x12\x00\"A\n\x07Message\x12(\n\x04time\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\t\"]\n\x08\x43hatRoom\x12\x11\n\x02id\x18\x01 \x01(\x05\x42\x05\x8aM\x02\x08\x01\x12\x1f\n\x06people\x18\x02 \x03(\x0b\x32\x0f.example.Person\x12\x1d\n\x03msg\x18\x03 \x03(\x0b\x32\x10.example.Messageb\x06proto3')
 
 
 
@@ -52,10 +53,10 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _PERSON.fields_by_name['name']._serialized_options = b'\212M\002\022\000'
   _CHATROOM.fields_by_name['id']._options = None
   _CHATROOM.fields_by_name['id']._serialized_options = b'\212M\002\010\001'
-  _PERSON._serialized_start=62
-  _PERSON._serialized_end=110
-  _MESSAGE._serialized_start=112
-  _MESSAGE._serialized_end=135
-  _CHATROOM._serialized_start=137
-  _CHATROOM._serialized_end=230
+  _PERSON._serialized_start=95
+  _PERSON._serialized_end=143
+  _MESSAGE._serialized_start=145
+  _MESSAGE._serialized_end=210
+  _CHATROOM._serialized_start=212
+  _CHATROOM._serialized_end=305
 # @@protoc_insertion_point(module_scope)

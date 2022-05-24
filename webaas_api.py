@@ -6,13 +6,16 @@ import address_book_pb2
 import websockets
 import asyncio
 import threading
+from google.protobuf.timestamp_pb2 import Timestamp
+import datetime
+
 ip = '202.120.40.82'
 port_list = [11232, 11233]
 port = 0
 # appName = 'python-chatroom' + str(uuid.uuid4())  # unique app name
 # appID = None
-appName = 'python-chatroom35b54caf-524b-4e2c-b12f-32cdd863c1d1'
-appID = 'f2f40771-72cf-4ae8-b9c3-2983b4e8a972'
+appName = 'python-chatroom01d57051-5bc0-4170-882d-ae4c9cafa593'
+appID = '0afe4b3d-48f7-4174-b35e-230058e7acea'
 
 err_code = {
     1001: "Invalid Format",
@@ -247,7 +250,9 @@ class ChatRoomInfo:
                 print("update message")
                 message_list = []
                 for item in self.chatroom.msg:
-                    message_list.append(item.data)
+                    message_list.append(
+                        self.format_message(item)
+                    )
                 print(message_list)
                 self.show_message_func(message_list)
             # Close Websockets
@@ -279,9 +284,11 @@ class ChatRoomInfo:
     def send_msg(self, message):
         new_message = address_book_pb2.Message()
         new_message.data = message
+        new_message.time.GetCurrentTime()
         create_message(new_message)
+
         self.add_message_to_chatroom(new_message, self.chatroom_id)
-        self.show_message_func([message])
+        self.show_message_func([self.format_message(new_message)])
 
     def add_person_to_chatroom(self, person_id, chatroom_id):
         chatroom = self.get_chatroom(chatroom_id)
@@ -293,6 +300,12 @@ class ChatRoomInfo:
         chatroom = self.get_chatroom(chatroom_id)
         chatroom.msg.append(message)
         update_chatroom(chatroom)
+
+    @staticmethod
+    def format_message(proto_message):
+        msg_date_time = proto_message.time.ToDatetime()
+        message = proto_message.data
+        return "\[{}] {}".format(msg_date_time.strftime('%H:%M:%S'), message)
 
     @staticmethod
     def del_person_from_chatroom(person_id, chatroom_id):
@@ -329,7 +342,9 @@ class ChatRoomInfo:
     def get_message_list(chatroom):
         message_list = []
         for item in chatroom.msg:
-            message_list.append(item.data)
+            message_list.append(
+                ChatRoomInfo.format_message(item)
+            )
         return message_list
 
 #if __name__ == "__main__":
