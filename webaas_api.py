@@ -91,7 +91,10 @@ def get_used_chatroom_id():
 
 def get_avail_chatroom_id():
     chatroom_id_list = get_used_chatroom_id()
-    cur_max_chatroom_id = chatroom_id_list[-1]
+    if len(chatroom_id_list) == 0:
+        cur_max_chatroom_id = 0
+    else:
+        cur_max_chatroom_id = chatroom_id_list[-1]
     return cur_max_chatroom_id + 1
 
 def create_chatroom():
