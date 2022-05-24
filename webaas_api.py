@@ -289,17 +289,18 @@ class ChatRoomInfo:
         chatroom.people.insert(person_id - 1, person)
         update_chatroom(chatroom)
 
-    def del_person_from_chatroom(self, person_id, chatroom_id):
-        chatroom = self.get_chatroom(chatroom_id)
-        for item in chatroom.people:
-            if item.id == person_id:
-                chatroom.people.remove(item)
-                update_chatroom(chatroom)
-
     def add_message_to_chatroom(self, message, chatroom_id):
         chatroom = self.get_chatroom(chatroom_id)
         chatroom.msg.append(message)
         update_chatroom(chatroom)
+
+    @staticmethod
+    def del_person_from_chatroom(person_id, chatroom_id):
+        chatroom = ChatRoomInfo.get_chatroom(chatroom_id)
+        for item in chatroom.people:
+            if item.id == person_id:
+                chatroom.people.remove(item)
+                update_chatroom(chatroom)
 
     @staticmethod
     def get_chatroom(chatroom_id):
