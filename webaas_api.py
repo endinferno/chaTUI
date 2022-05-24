@@ -208,6 +208,9 @@ class ChatRoomInfo:
         self.chatroom = self.get_chatroom(self.chatroom_id)
         people_list = self.get_people_list(self.chatroom)
         self.show_person_func(people_list)
+        # Show History Messages
+        message_list = self.get_message_list(self.chatroom)
+        self.show_message_func(message_list[-20:])
         # 创建notification，当前用户对于Person的notification
         # 对于下一个Person的主键的notification
         self.n_id = create_notification('example.ChatRoom', str(self.chatroom_id))
