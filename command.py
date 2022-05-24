@@ -1,21 +1,16 @@
 import sys
 import webaas_api
 
-chatroom_info = None
-
 class ChatRoomApp:
     def __init__(self, show_person, show_message):
-        self.chatroom_info = None
         self.show_person_func = show_person
         self.show_message_func = show_message
+        self.chatroom_info = webaas_api.ChatRoomInfo(
+            self.show_person_func, self.show_message_func)
 
     def process_join(self, join_command):
         username = join_command[0]
         chatroom_id = int(join_command[1])
-
-        if self.chatroom_info == None:
-            self.chatroom_info = webaas_api.ChatRoomInfo(
-                chatroom_id, self.show_person_func, self.show_message_func)
 
         if self.in_chatroom():
             # Logout Current ChatRoom
@@ -64,10 +59,6 @@ class ChatRoomApp:
             self.show_message_func(chatroom_print_list)
 
     def process_leave(self):
-        if self.chatroom_info == None:
-            self.show_message_func(["You Are Not Logged In!"])
-            return
-
         if self.in_chatroom():
             # log out
             self.chatroom_info.logout()
@@ -75,14 +66,10 @@ class ChatRoomApp:
             self.show_message_func(["You Are Not Logged In!"])
 
     def process_message(self, message):
-        if self.chatroom_info == None:
-            self.show_message_func(["You Are Not in ChatRoom Now!"])
-            return
-
         if self.in_chatroom():
             self.chatroom_info.send_msg(message)
         else:
-            self.show_message_func(["You Are Not Logged In!"])
+            self.show_message_func(["You Are Not in ChatRoom Now!"])
             return
 
     def process_help(self):

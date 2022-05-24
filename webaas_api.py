@@ -186,9 +186,7 @@ def delete_notification(schema_name, notification_id):
     return r.json()["notificationID"]
 
 class ChatRoomInfo:
-    def __init__(self, chatroom_id, show_person_func, show_message_func):
-        # Get ChatRoom By ID
-        self.set_chatroom_id(chatroom_id)
+    def __init__(self, show_person_func, show_message_func):
         self.show_person_func = show_person_func
         self.show_message_func = show_message_func
         self.in_chatroom = False
