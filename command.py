@@ -31,8 +31,6 @@ class ChatRoomApp:
     def process_show(self, show_command):
         chatroom_id = int(show_command[0])
         show_property = show_command[1]
-        temp_chatroom_info = webaas_api.ChatRoomInfo(
-                chatroom_id, self.show_person_func, self.show_message_func)
         if show_property == 'People':
             temp_chatroom_info.show_person()
         elif show_property == 'Message':
@@ -40,8 +38,11 @@ class ChatRoomApp:
         elif show_property == 'ChatRoom':
             chatroom_print_list = []
             chatroom_id_list = webaas_api.get_used_chatroom_id()
-            for item in chatroom_id_list:
-                chatroom_print_list.append("ChatRoom ID: " + str(item))
+            if len(chatroom_id_list) == 0:
+                chatroom_print_list.append("There is No ChatRoom")
+            else:
+                for item in chatroom_id_list:
+                    chatroom_print_list.append("ChatRoom ID: " + str(item))
             self.show_message_func(chatroom_print_list)
 
     def process_leave(self):
