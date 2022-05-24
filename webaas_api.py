@@ -305,7 +305,9 @@ class ChatRoomInfo:
     def format_message(proto_message):
         msg_date_time = proto_message.time.ToDatetime()
         message = proto_message.data
-        return "\[{}] {}".format(msg_date_time.strftime('%H:%M:%S'), message)
+        time_color = '[#4D4D4D]'
+        message_color = '[#CFCFCF]'
+        return "{}\[{}] {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'), message_color, message)
 
     @staticmethod
     def del_person_from_chatroom(person_id, chatroom_id):
