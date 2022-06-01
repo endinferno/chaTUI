@@ -288,21 +288,22 @@ class ChatRoomInfo:
 
     def send_join_msg(self, message_str):
         self.send_msg(self.create_msg(
-            message_str, address_book_pb2.MessageType.SYS_JOIN_MSG))
+            message_str, address_book_pb2.MessageType.SYS_JOIN_MSG, self.username))
 
     def send_left_msg(self, message_str):
         self.send_msg(self.create_msg(
-            message_str, address_book_pb2.MessageType.SYS_LEFT_MSG))
+            message_str, address_book_pb2.MessageType.SYS_LEFT_MSG, self.username))
 
     def send_user_msg(self, message_str):
         self.send_msg(self.create_msg(
-            message_str, address_book_pb2.MessageType.USER_MSG))
+            message_str, address_book_pb2.MessageType.USER_MSG, self.username))
 
-    def create_msg(self, message_str, message_type):
+    def create_msg(self, message_str, message_type, username):
         new_message = address_book_pb2.Message()
         new_message.data = message_str
         new_message.time.GetCurrentTime()
         new_message.type = message_type
+        new_message.people = username
         return new_message
 
     def send_msg(self, message):

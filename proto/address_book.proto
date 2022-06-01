@@ -17,8 +17,9 @@ enum MessageType {
 
 message Message {
   google.protobuf.Timestamp time = 1;
-  MessageType type = 2;
-  string data = 3;
+  string people = 2;
+  MessageType type = 3;
+  string data = 4;
 }
 
 message ChatRoom {
