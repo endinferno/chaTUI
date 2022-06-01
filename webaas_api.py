@@ -211,7 +211,8 @@ class ChatRoomInfo:
         self.show_person_func(people_list)
         # Show History Messages
         message_list = self.get_message_list(self.chatroom)
-        self.show_message_func(message_list[-20:])
+        self.msg_list = message_list[-20:]
+        self.show_message_func(self.msg_list)
         self.send_join_msg("joined the ChatRoom")
         # Create Notification of Current ChatRoom
         self.n_id = create_notification('example.ChatRoom', str(self.chatroom_id))
@@ -287,16 +288,25 @@ class ChatRoomInfo:
         return len(self.chatroom.people) + 1
 
     def send_join_msg(self, message_str):
-        self.send_msg(self.create_msg(
-            message_str, address_book_pb2.MessageType.SYS_JOIN_MSG, self.username))
+        new_msg = self.create_msg(
+            message_str, address_book_pb2.MessageType.SYS_JOIN_MSG, self.username)
+        self.send_msg(new_msg)
+        self.msg_list.append(self.format_message(new_msg))
+        self.show_message_func(self.msg_list)
 
     def send_left_msg(self, message_str):
-        self.send_msg(self.create_msg(
-            message_str, address_book_pb2.MessageType.SYS_LEFT_MSG, self.username))
+        new_msg = self.create_msg(
+            message_str, address_book_pb2.MessageType.SYS_LEFT_MSG, self.username)
+        self.send_msg(new_msg)
+        self.msg_list.append(self.format_message(new_msg))
+        self.show_message_func(self.msg_list)
 
     def send_user_msg(self, message_str):
-        self.send_msg(self.create_msg(
-            message_str, address_book_pb2.MessageType.USER_MSG, self.username))
+        new_msg = self.create_msg(
+            message_str, address_book_pb2.MessageType.USER_MSG, self.username)
+        self.send_msg(new_msg)
+        self.msg_list.append(self.format_message(new_msg))
+        self.show_message_func(self.msg_list)
 
     def create_msg(self, message_str, message_type, username):
         new_message = address_book_pb2.Message()
@@ -309,7 +319,6 @@ class ChatRoomInfo:
     def send_msg(self, message):
         create_message(message)
         self.add_message_to_chatroom(message, self.chatroom_id)
-        self.show_message_func([self.format_message(message)])
 
     def add_person_to_chatroom(self, person_id, chatroom_id):
         chatroom = self.get_chatroom(chatroom_id)
