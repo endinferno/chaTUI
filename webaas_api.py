@@ -14,8 +14,8 @@ port_list = [11232, 11233]
 port = 0
 # appName = 'python-chatroom' + str(uuid.uuid4())  # unique app name
 # appID = None
-appName = 'python-chatroom01d57051-5bc0-4170-882d-ae4c9cafa593'
-appID = '0afe4b3d-48f7-4174-b35e-230058e7acea'
+appName = 'python-chatroom68f998ae-dd1b-4c80-a0da-1ba6a618469d'
+appID = 'ac88827b-4126-4ea5-98b8-0de6d2eef15f'
 
 err_code = {
     1001: "Invalid Format",
@@ -196,6 +196,7 @@ class ChatRoomInfo:
 
     def login(self, username):
         self.in_chatroom = True
+        self.username = username
         # Create User
         self.person_id = self.get_avail_person_id()
         new_person = address_book_pb2.Person()
@@ -211,6 +212,7 @@ class ChatRoomInfo:
         # Show History Messages
         message_list = self.get_message_list(self.chatroom)
         self.show_message_func(message_list[-20:])
+        self.send_join_msg("{} joined the ChatRoom".format(self.username))
         # Create Notification of Current ChatRoom
         self.n_id = create_notification('example.ChatRoom', str(self.chatroom_id))
         self.thread_running = True
@@ -220,6 +222,7 @@ class ChatRoomInfo:
         p.start()
 
     def logout(self):
+        self.send_left_msg("{} left ChatRoom".format(self.username))
         self.in_chatroom = False
         # Stop the Thread
         self.thread_running = False
@@ -283,14 +286,29 @@ class ChatRoomInfo:
                 return idx
         return len(self.chatroom.people) + 1
 
-    def send_msg(self, message):
-        new_message = address_book_pb2.Message()
-        new_message.data = message
-        new_message.time.GetCurrentTime()
-        create_message(new_message)
+    def send_join_msg(self, message_str):
+        self.send_msg(self.create_msg(
+            message_str, address_book_pb2.MessageType.SYS_JOIN_MSG))
 
-        self.add_message_to_chatroom(new_message, self.chatroom_id)
-        self.show_message_func([self.format_message(new_message)])
+    def send_left_msg(self, message_str):
+        self.send_msg(self.create_msg(
+            message_str, address_book_pb2.MessageType.SYS_LEFT_MSG))
+
+    def send_user_msg(self, message_str):
+        self.send_msg(self.create_msg(
+            message_str, address_book_pb2.MessageType.USER_MSG))
+
+    def create_msg(self, message_str, message_type):
+        new_message = address_book_pb2.Message()
+        new_message.data = message_str
+        new_message.time.GetCurrentTime()
+        new_message.type = message_type
+        return new_message
+
+    def send_msg(self, message):
+        create_message(message)
+        self.add_message_to_chatroom(message, self.chatroom_id)
+        self.show_message_func([self.format_message(message)])
 
     def add_person_to_chatroom(self, person_id, chatroom_id):
         chatroom = self.get_chatroom(chatroom_id)
@@ -307,9 +325,25 @@ class ChatRoomInfo:
     def format_message(proto_message):
         msg_date_time = proto_message.time.ToDatetime()
         message = proto_message.data
-        time_color = '[#4D4D4D]'
-        message_color = '[#CFCFCF]'
-        return "{}\[{}] {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'), message_color, message)
+        if proto_message.type == address_book_pb2.MessageType.USER_MSG:
+            time_color = '[#4D4D4D]'
+            message_color = '[#CFCFCF]'
+            return "{}\[{}] {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'),
+                                         message_color, message)
+        elif proto_message.type == address_book_pb2.MessageType.SYS_JOIN_MSG:
+            time_color = '[#4D4D4D]'
+            arrow_color = '[#A5C3A7]'
+            message_color = '[#CFCFCF]'
+            return "{}\[{}]{} -> {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'),
+                                            arrow_color, message_color, message)
+        elif proto_message.type == address_book_pb2.MessageType.SYS_LEFT_MSG:
+            time_color = '[#4D4D4D]'
+            arrow_color = '[#EB7886]'
+            message_color = '[#CFCFCF]'
+            return "{}\[{}]{} <- {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'),
+                                            arrow_color, message_color, message)
+        else:
+            return ""
 
     @staticmethod
     def del_person_from_chatroom(person_id, chatroom_id):

@@ -67,7 +67,7 @@ class ChatRoomApp:
 
     def process_message(self, message):
         if self.in_chatroom():
-            self.chatroom_info.send_msg(message)
+            self.chatroom_info.send_user_msg(message)
         else:
             self.show_message_func(["You Are Not in ChatRoom Now!"])
             return

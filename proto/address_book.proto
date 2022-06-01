@@ -9,9 +9,16 @@ message Person {
   string name = 2 [ (webaas.db.record.field).index = {} ];
 }
 
+enum MessageType {
+  USER_MSG = 0;
+  SYS_JOIN_MSG = 1;
+  SYS_LEFT_MSG = 2;
+}
+
 message Message {
   google.protobuf.Timestamp time = 1;
-  string data = 2;
+  MessageType type = 2;
+  string data = 3;
 }
 
 message ChatRoom {
