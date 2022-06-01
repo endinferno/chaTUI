@@ -14,8 +14,8 @@ port_list = [11232, 11233]
 port = 0
 # appName = 'python-chatroom' + str(uuid.uuid4())  # unique app name
 # appID = None
-appName = 'python-chatroom68f998ae-dd1b-4c80-a0da-1ba6a618469d'
-appID = 'ac88827b-4126-4ea5-98b8-0de6d2eef15f'
+appName = 'python-chatroom01d57051-5bc0-4170-882d-ae4c9cafa593'
+appID = '0afe4b3d-48f7-4174-b35e-230058e7acea'
 
 err_code = {
     1001: "Invalid Format",
