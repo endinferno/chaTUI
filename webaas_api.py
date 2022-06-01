@@ -336,19 +336,20 @@ class ChatRoomInfo:
         msg_date_time = proto_message.time.ToDatetime()
         username = proto_message.people
         message = proto_message.data
-        if proto_message.type == address_book_pb2.MessageType.USER_MSG:
+        msg_type = proto_message.type
+        if msg_type == address_book_pb2.MessageType.USER_MSG:
             time_color = '[#4D4D4D]'
             message_color = '[#CFCFCF]'
             return "{}\[{}] {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'),
                                          message_color, message)
-        elif proto_message.type == address_book_pb2.MessageType.SYS_JOIN_MSG:
+        elif msg_type == address_book_pb2.MessageType.SYS_JOIN_MSG:
             time_color = '[#4D4D4D]'
             arrow_color = '[#A5C3A7]'
             name_color = '[#434343 bold]'
             message_color = '[#434343]'
             return "{}\[{}]{} -> {}{} {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'),
                                             arrow_color, name_color, username, message_color, message)
-        elif proto_message.type == address_book_pb2.MessageType.SYS_LEFT_MSG:
+        elif msg_type == address_book_pb2.MessageType.SYS_LEFT_MSG:
             time_color = '[#4D4D4D]'
             arrow_color = '[#EB7886]'
             name_color = '[#434343 bold]'
