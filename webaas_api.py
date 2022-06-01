@@ -212,7 +212,7 @@ class ChatRoomInfo:
         # Show History Messages
         message_list = self.get_message_list(self.chatroom)
         self.show_message_func(message_list[-20:])
-        self.send_join_msg("{} joined the ChatRoom".format(self.username))
+        self.send_join_msg("joined the ChatRoom")
         # Create Notification of Current ChatRoom
         self.n_id = create_notification('example.ChatRoom', str(self.chatroom_id))
         self.thread_running = True
@@ -222,7 +222,7 @@ class ChatRoomInfo:
         p.start()
 
     def logout(self):
-        self.send_left_msg("{} left ChatRoom".format(self.username))
+        self.send_left_msg("left ChatRoom")
         self.in_chatroom = False
         # Stop the Thread
         self.thread_running = False
@@ -325,6 +325,7 @@ class ChatRoomInfo:
     @staticmethod
     def format_message(proto_message):
         msg_date_time = proto_message.time.ToDatetime()
+        username = proto_message.people
         message = proto_message.data
         if proto_message.type == address_book_pb2.MessageType.USER_MSG:
             time_color = '[#4D4D4D]'
@@ -334,15 +335,17 @@ class ChatRoomInfo:
         elif proto_message.type == address_book_pb2.MessageType.SYS_JOIN_MSG:
             time_color = '[#4D4D4D]'
             arrow_color = '[#A5C3A7]'
+            name_color = '[#434343 bold]'
             message_color = '[#434343]'
-            return "{}\[{}]{} -> {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'),
-                                            arrow_color, message_color, message)
+            return "{}\[{}]{} -> {}{} {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'),
+                                            arrow_color, name_color, username, message_color, message)
         elif proto_message.type == address_book_pb2.MessageType.SYS_LEFT_MSG:
             time_color = '[#4D4D4D]'
             arrow_color = '[#EB7886]'
+            name_color = '[#434343 bold]'
             message_color = '[#434343]'
-            return "{}\[{}]{} <- {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'),
-                                            arrow_color, message_color, message)
+            return "{}\[{}]{} <- {}{} {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'),
+                                            arrow_color, name_color, username, message_color, message)
         else:
             return ""
 
