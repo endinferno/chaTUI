@@ -333,13 +333,13 @@ class ChatRoomInfo:
         elif proto_message.type == address_book_pb2.MessageType.SYS_JOIN_MSG:
             time_color = '[#4D4D4D]'
             arrow_color = '[#A5C3A7]'
-            message_color = '[#CFCFCF]'
+            message_color = '[#434343]'
             return "{}\[{}]{} -> {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'),
                                             arrow_color, message_color, message)
         elif proto_message.type == address_book_pb2.MessageType.SYS_LEFT_MSG:
             time_color = '[#4D4D4D]'
             arrow_color = '[#EB7886]'
-            message_color = '[#CFCFCF]'
+            message_color = '[#434343]'
             return "{}\[{}]{} <- {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'),
                                             arrow_color, message_color, message)
         else:
