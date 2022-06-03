@@ -113,3 +113,9 @@ class ChatRoomApp:
 #        webaas_api.register()
 #        webaas_api.create_schema()
 
+    def release(self):
+        if self.in_chatroom() == False:
+            return
+
+        self.chatroom_info.logout()
+

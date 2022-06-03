@@ -228,6 +228,7 @@ def main(argv: list[str] | None = None) -> None:
         input_field.bind(ptg.keys.ENTER, updatePrintField)
 
     ptg.tim.print(f"[{PALETTE_LIGHT}]Goodbye!")
+    chatroom_app.release()
 
 if __name__ == "__main__":
     chatroom_app = command.ChatRoomApp(show_person, show_message)
