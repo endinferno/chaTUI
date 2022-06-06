@@ -202,10 +202,6 @@ class ChatRoomInfo:
         # Delete User
         delete_person(self.person_id)
         self.del_person_from_chatroom(self.person_id, self.chatroom_id)
-        # Update People List
-        self.chatroom = self.get_chatroom(self.chatroom_id)
-        people_list = self.get_people_list(self.chatroom)
-        self.show_person_func(people_list)
         # Delete notification
         delete_notification('example.ChatRoom', self.n_id)
 
