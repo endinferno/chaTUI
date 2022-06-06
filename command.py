@@ -122,12 +122,14 @@ class ChatRoomApp:
 
     def init_app(self):
         webaas_api.test_endpoint()
-#        webaas_api.register()
-#        webaas_api.create_schema()
+        webaas_api.register()
+        webaas_api.create_schema()
 
     def release(self):
         if self.in_chatroom() == False:
+            webaas_api.unregister()
             return
 
         self.chatroom_info.logout()
+        webaas_api.unregister()
 

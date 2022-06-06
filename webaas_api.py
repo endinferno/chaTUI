@@ -12,10 +12,8 @@ import datetime
 ip = '202.120.40.82'
 port_list = [11232, 11233]
 port = 0
-# appName = 'python-chatroom' + str(uuid.uuid4())  # unique app name
-# appID = None
-appName = 'python-chatrooma3dcccdf-24b2-420b-9674-eac28dd6a782'
-appID = 'c7d671c5-8e2c-443b-b147-88cc92f81ffd'
+appName = 'python-ChaTUI' + str(uuid.uuid4())  # unique app name
+appID = None
 
 err_code = {
     1001: "Invalid Format",
@@ -52,6 +50,15 @@ def register():
         appID = r.json()["appID"]
     else:
         sys.exit(1)
+
+def unregister():
+    global appID
+    r = requests.delete("http://" + get_endpoint() + "/app",
+                        params={"appName": appName, "appID": appID})
+    if r.status_code == 200:
+        return
+    else:
+        print("Fail to Delete APP")
 
 def create_schema():
     # upload schema file
