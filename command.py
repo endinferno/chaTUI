@@ -62,6 +62,8 @@ class ChatRoomApp:
         if self.in_chatroom():
             # log out
             self.chatroom_info.logout()
+            self.show_message_func([])
+            self.show_person_func([])
         else:
             self.show_message_func(["You Are Not Logged In!"])
 
