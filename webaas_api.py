@@ -47,18 +47,13 @@ def test_endpoint():
 
 def register():
     global appID
-    print("Registering app...")
     r = requests.post("http://" + get_endpoint() + "/app", params={"appName": appName})
-    print(appName)
     if r.status_code == 200:
         appID = r.json()["appID"]
-        print("App registered with ID: "+appID)
     else:
-        print("Error registering app: "+r.text)
         sys.exit(1)
 
 def create_schema():
-    print("Creating schema...")
     # upload schema file
     with open("proto/address_book.proto", "rb") as f:
         r = requests.put("http://" + get_endpoint() + "/schema", data = f.read(),
@@ -66,16 +61,12 @@ def create_schema():
                                    "fileName": "address_book.proto",
                                    "version": "1.0.0"})
         if r.status_code != 200:
-            print("Error creating schema: "+r.text)
             sys.exit(1)
-    print("Schema file uploaded.")
     # update schema version
     r = requests.post("http://" + get_endpoint() + "/schema",
                       params={"appID": appID, "version": "1.0.0"})
     if r.status_code != 200:
-        print("Error updating schema version: "+r.text)
         sys.exit(1)
-    print("Schema version updated.")
 
 def get_used_chatroom_id():
     chatroom_id_list = []
@@ -103,24 +94,18 @@ def get_avail_chatroom_id():
 def create_chatroom():
     chatroom = address_book_pb2.ChatRoom()
     chatroom.id = get_avail_chatroom_id()
-    print("Creating Chat Room...")
     r = requests.post("http://" + get_endpoint() + "/record",
                       params={"appID": appID, "schemaName": "example.ChatRoom"},
                       data=chatroom.SerializeToString())
     if r.status_code != 200:
-        print("Error creating chat room: "+r.text)
         sys.exit(1)
-    print("Chat Room created.")
 
 def update_chatroom(chatroom: address_book_pb2.ChatRoom):
-    print("Updating Chat Room...")
     r = requests.post("http://" + get_endpoint() + "/record",
                       params={"appID": appID, "schemaName": "example.ChatRoom"},
                       data=chatroom.SerializeToString())
     if r.status_code != 200:
-        print("Error creating chat room: "+r.text)
         sys.exit(1)
-    print("Chat Room updated.")
 
 def get_person(person_id):
     r = requests.get("http://" + get_endpoint() + "/query",
@@ -128,7 +113,6 @@ def get_person(person_id):
                              "schemaName": "example.Person",
                              "recordKey": person_id})
     if r.status_code != 200:
-        print("Error getting person: "+r.text)
         return None
     person = address_book_pb2.Person().FromString(r.content)
     return person
@@ -138,7 +122,6 @@ def create_person(person):
                       params={"appID": appID, "schemaName": "example.Person"},
                       data=person.SerializeToString())
     if r.status_code != 200:
-        print("Error creating person: "+r.text)
         sys.exit(1)
 
 def delete_person(person_id):
@@ -147,14 +130,12 @@ def delete_person(person_id):
                                 "schemaName": "example.Person", 
                                 "recordKey": person_id})
     if r.status_code != 200:
-        print("Error deleting person: "+r.text)
         sys.exit(1)
 
 def create_message(message):
     r = requests.post("http://" + get_endpoint() + "/record", params={
         "appID": appID, "schemaName": "example.Message"}, data=message.SerializeToString())
     if r.status_code != 200:
-        print("Error creating person: "+r.text)
         sys.exit(1)
 
 def create_notification(schema_name, record_key):
@@ -165,27 +146,18 @@ def create_notification(schema_name, record_key):
             record_key
         ]
     }
-#    print("Creating notification...")
-#    print(json.dumps(params))
     r = requests.post('http://' + get_endpoint() + "/notification", data=json.dumps(params))
     if r.status_code != 200:
-        print("Error creating notification: "+r.text)
         sys.exit(1)
-#    print("Notification created.")
-#    print(r.json())
     return r.json()["notificationID"]
 
 def delete_notification(schema_name, notification_id):
-#    print("Deleting notification...")
     r = requests.delete('http://' + get_endpoint() + "/notification", params = {
         "appID": appID, 
         "notificationID": notification_id
     })
     if r.status_code != 200:
-        print("Error creating notification: "+r.text)
         sys.exit(1)
-#    print("Notification deleted.")
-#    print(r.json())
     return r.json()["notificationID"]
 
 class ChatRoomInfo:
@@ -246,21 +218,17 @@ class ChatRoomInfo:
                 msg = await websocket.recv()
                 # Get ChatRoom People
                 self.chatroom = self.get_chatroom(self.chatroom_id)
-                print("update person")
                 people_list = []
                 for item in self.chatroom.people:
                     people_list.append(item.name)
-                print(people_list)
                 if self.in_chatroom:
                     self.show_person_func(people_list)
                 # Get ChatRoom Message
-                print("update message")
                 message_list = []
                 for item in self.chatroom.msg:
                     message_list.append(
                         self.format_message(item)
                     )
-                print(message_list)
                 if self.in_chatroom:
                     self.show_message_func(message_list)
             # Close Websockets
@@ -377,12 +345,9 @@ class ChatRoomInfo:
                                  "schemaName": "example.ChatRoom",
                                  "recordKey": chatroom_id})
         if r.status_code != 200:
-            print("Error getting address book: "+r.text)
-            print(get_err_code(r.json()))
             return None
         chatroom = address_book_pb2.ChatRoom().FromString(r.content)
         if chatroom == None:
-            print("Error ChatRoom ID " + str(chatroom_id))
             return None
         return chatroom
 
