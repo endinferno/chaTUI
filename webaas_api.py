@@ -165,6 +165,7 @@ class ChatRoomInfo:
         self.show_person_func = show_person_func
         self.show_message_func = show_message_func
         self.in_chatroom = False
+        self.msg_from_myself = False
 
     def login(self, username):
         self.in_chatroom = True
@@ -179,8 +180,8 @@ class ChatRoomInfo:
         self.add_person_to_chatroom(self.person_id, self.chatroom_id)
         # Show People List in SideBar
         self.chatroom = self.get_chatroom(self.chatroom_id)
-        people_list = self.get_people_list(self.chatroom)
-        self.show_person_func(people_list)
+        self.people_list = self.get_people_list(self.chatroom)
+        self.show_person_func(self.people_list)
         # Show History Messages
         message_list = self.get_message_list(self.chatroom)
         self.msg_list = message_list[-20:]
@@ -212,21 +213,24 @@ class ChatRoomInfo:
             while self.thread_running:
                 # Next User Join
                 msg = await websocket.recv()
-                # Get ChatRoom People
                 self.chatroom = self.get_chatroom(self.chatroom_id)
-                people_list = []
-                for item in self.chatroom.people:
-                    people_list.append(item.name)
-                if self.in_chatroom:
-                    self.show_person_func(people_list)
-                # Get ChatRoom Message
-                message_list = []
-                for item in self.chatroom.msg:
-                    message_list.append(
-                        self.format_message(item)
+                if len(self.people_list) == len(self.chatroom.people):
+                    if self.msg_from_myself:
+                        self.msg_from_myself = False
+                        continue
+                    # Get ChatRoom Message
+                    self.msg_list.append(
+                        ChatRoomInfo.format_message(self.chatroom.msg[-1])
                     )
-                if self.in_chatroom:
-                    self.show_message_func(message_list)
+                    if self.in_chatroom:
+                        self.show_message_func(self.msg_list)
+                else:
+                    # Get ChatRoom People
+                    self.people_list = []
+                    for person in self.chatroom.people:
+                        self.people_list.append(person.name)
+                    if self.in_chatroom:
+                        self.show_person_func(self.people_list)
             # Close Websockets
             await websocket.close(reason='exit')
         return
@@ -268,6 +272,7 @@ class ChatRoomInfo:
         self.show_message_func(self.msg_list)
 
     def send_user_msg(self, message_str):
+        self.msg_from_myself = True
         new_msg = self.create_msg(
             message_str, address_book_pb2.MessageType.USER_MSG, self.username)
         self.send_msg(new_msg)
