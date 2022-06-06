@@ -129,8 +129,6 @@ input_field = ptg.InputField()
 container_window = ptg.Container(box="EMPTY")
 people_container_window = ptg.Container(box="EMPTY")
 body_window = ptg.Window(
-                "[app.title]ChatRoom XXX",
-                "",
                 container_window,
                 vertical_align=ptg.VerticalAlignment.TOP,
                 overflow=ptg.Overflow.SCROLL,
@@ -231,6 +229,6 @@ def main(argv: list[str] | None = None) -> None:
     chatroom_app.release()
 
 if __name__ == "__main__":
-    chatroom_app = command.ChatRoomApp(show_person, show_message)
+    chatroom_app = command.ChatRoomApp(show_person, show_message, body_window)
     chatroom_app.init_app()
     main(sys.argv[1:])

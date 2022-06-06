@@ -1,10 +1,12 @@
 import sys
 import webaas_api
+import pytermgui as ptg
 
 class ChatRoomApp:
-    def __init__(self, show_person, show_message):
+    def __init__(self, show_person, show_message, body_window):
         self.show_person_func = show_person
         self.show_message_func = show_message
+        self.body_window = body_window
         self.chatroom_info = webaas_api.ChatRoomInfo(
             self.show_person_func, self.show_message_func)
 
@@ -18,10 +20,16 @@ class ChatRoomApp:
             # Login Another ChatRoom
             self.chatroom_info.set_chatroom_id(chatroom_id)
             self.chatroom_info.login(username)
+            corner = ["", "", "", ""]
+            corner[ptg.VerticalAlignment.TOP] = "[bold #FCBA03]ChatRoom {}".format(chatroom_id)
+            self.body_window.set_char("corner", corner)
         else:
             # Login ChatRoom
             self.chatroom_info.set_chatroom_id(chatroom_id)
             self.chatroom_info.login(username)
+            corner = ["", "", "", ""]
+            corner[ptg.VerticalAlignment.TOP] = "[bold #FCBA03]ChatRoom {}".format(chatroom_id)
+            self.body_window.set_char("corner", corner)
 
     def process_show(self, show_command):
         chatroom_id = int(show_command[0])
@@ -62,6 +70,8 @@ class ChatRoomApp:
         if self.in_chatroom():
             # log out
             self.chatroom_info.logout()
+            corner = ["", "", "", ""]
+            self.body_window.set_char("corner", corner)
             self.show_message_func([])
             self.show_person_func([])
         else:
