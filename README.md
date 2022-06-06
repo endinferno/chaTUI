@@ -8,6 +8,7 @@ python3 -m pip install -r requirements.txt
 
 # 运行方式
 
+protoc -I=./proto/ --python_out=./ ./proto/*.proto
 python3 simple_app.py
 
 # 使用方式
