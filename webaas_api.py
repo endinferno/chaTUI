@@ -251,7 +251,8 @@ class ChatRoomInfo:
                 for item in self.chatroom.people:
                     people_list.append(item.name)
                 print(people_list)
-                self.show_person_func(people_list)
+                if self.in_chatroom:
+                    self.show_person_func(people_list)
                 # Get ChatRoom Message
                 print("update message")
                 message_list = []
@@ -260,7 +261,8 @@ class ChatRoomInfo:
                         self.format_message(item)
                     )
                 print(message_list)
-                self.show_message_func(message_list)
+                if self.in_chatroom:
+                    self.show_message_func(message_list)
             # Close Websockets
             await websocket.close(reason='exit')
         return
