@@ -1,1 +1,4 @@
 .vim
+./chatroom_pb2.py
+./record_metadata_options_pb2.py
+./record_metadata_pb2.py
