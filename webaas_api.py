@@ -2,7 +2,7 @@ import requests
 import uuid
 import sys
 import json
-import address_book_pb2
+import chatroom_pb2
 import websockets
 import asyncio
 import threading
@@ -62,10 +62,10 @@ def unregister():
 
 def create_schema():
     # upload schema file
-    with open("proto/address_book.proto", "rb") as f:
+    with open("proto/chatroom.proto", "rb") as f:
         r = requests.put("http://" + get_endpoint() + "/schema", data = f.read(),
                          params = {"appID": appID,
-                                   "fileName": "address_book.proto",
+                                   "fileName": "chatroom.proto",
                                    "version": "1.0.0"})
         if r.status_code != 200:
             sys.exit(1)
@@ -84,7 +84,7 @@ def get_used_chatroom_id():
                                  "recordKey": idx})
         if r.status_code != 200:
             break
-        chatroom = address_book_pb2.ChatRoom().FromString(r.content)
+        chatroom = chatroom_pb2.ChatRoom().FromString(r.content)
         if chatroom == None:
             break
         chatroom_id_list.append(idx)
@@ -99,7 +99,7 @@ def get_avail_chatroom_id():
     return cur_max_chatroom_id + 1
 
 def create_chatroom():
-    chatroom = address_book_pb2.ChatRoom()
+    chatroom = chatroom_pb2.ChatRoom()
     chatroom.id = get_avail_chatroom_id()
     r = requests.post("http://" + get_endpoint() + "/record",
                       params={"appID": appID, "schemaName": "example.ChatRoom"},
@@ -107,7 +107,7 @@ def create_chatroom():
     if r.status_code != 200:
         sys.exit(1)
 
-def update_chatroom(chatroom: address_book_pb2.ChatRoom):
+def update_chatroom(chatroom: chatroom_pb2.ChatRoom):
     r = requests.post("http://" + get_endpoint() + "/record",
                       params={"appID": appID, "schemaName": "example.ChatRoom"},
                       data=chatroom.SerializeToString())
@@ -121,7 +121,7 @@ def get_person(person_id):
                              "recordKey": person_id})
     if r.status_code != 200:
         return None
-    person = address_book_pb2.Person().FromString(r.content)
+    person = chatroom_pb2.Person().FromString(r.content)
     return person
 
 def create_person(person):
@@ -179,7 +179,7 @@ class ChatRoomInfo:
         self.username = username
         # Create User
         self.person_id = self.get_avail_person_id()
-        new_person = address_book_pb2.Person()
+        new_person = chatroom_pb2.Person()
         new_person.id = self.person_id
         new_person.name = username
         create_person(new_person)
@@ -266,14 +266,14 @@ class ChatRoomInfo:
 
     def send_join_msg(self, message_str):
         new_msg = self.create_msg(
-            message_str, address_book_pb2.MessageType.SYS_JOIN_MSG, self.username)
+            message_str, chatroom_pb2.MessageType.SYS_JOIN_MSG, self.username)
         self.send_msg(new_msg)
         self.msg_list.append(self.format_message(new_msg))
         self.show_message_func(self.msg_list)
 
     def send_left_msg(self, message_str):
         new_msg = self.create_msg(
-            message_str, address_book_pb2.MessageType.SYS_LEFT_MSG, self.username)
+            message_str, chatroom_pb2.MessageType.SYS_LEFT_MSG, self.username)
         self.send_msg(new_msg)
         self.msg_list.append(self.format_message(new_msg))
         self.show_message_func(self.msg_list)
@@ -281,13 +281,13 @@ class ChatRoomInfo:
     def send_user_msg(self, message_str):
         self.msg_from_myself = True
         new_msg = self.create_msg(
-            message_str, address_book_pb2.MessageType.USER_MSG, self.username)
+            message_str, chatroom_pb2.MessageType.USER_MSG, self.username)
         self.send_msg(new_msg)
         self.msg_list.append(self.format_message(new_msg))
         self.show_message_func(self.msg_list)
 
     def create_msg(self, message_str, message_type, username):
-        new_message = address_book_pb2.Message()
+        new_message = chatroom_pb2.Message()
         new_message.data = message_str
         new_message.time.GetCurrentTime()
         new_message.type = message_type
@@ -315,20 +315,20 @@ class ChatRoomInfo:
         username = proto_message.people
         message = proto_message.data
         msg_type = proto_message.type
-        if msg_type == address_book_pb2.MessageType.USER_MSG:
+        if msg_type == chatroom_pb2.MessageType.USER_MSG:
             time_color = '[#4D4D4D]'
             name_color = '[#95B253 bold]'
             message_color = '[#CFCFCF]'
             return "{}\[{}] {}<{}> {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'),
                                          name_color, username, message_color, message)
-        elif msg_type == address_book_pb2.MessageType.SYS_JOIN_MSG:
+        elif msg_type == chatroom_pb2.MessageType.SYS_JOIN_MSG:
             time_color = '[#4D4D4D]'
             arrow_color = '[#A5C3A7]'
             name_color = '[#434343 bold]'
             message_color = '[#434343]'
             return "{}\[{}]{} -> {}{} {}{}".format(time_color, msg_date_time.strftime('%H:%M:%S'),
                                             arrow_color, name_color, username, message_color, message)
-        elif msg_type == address_book_pb2.MessageType.SYS_LEFT_MSG:
+        elif msg_type == chatroom_pb2.MessageType.SYS_LEFT_MSG:
             time_color = '[#4D4D4D]'
             arrow_color = '[#EB7886]'
             name_color = '[#434343 bold]'
@@ -354,7 +354,7 @@ class ChatRoomInfo:
                                  "recordKey": chatroom_id})
         if r.status_code != 200:
             return None
-        chatroom = address_book_pb2.ChatRoom().FromString(r.content)
+        chatroom = chatroom_pb2.ChatRoom().FromString(r.content)
         if chatroom == None:
             return None
         return chatroom
